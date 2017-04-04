@@ -1,0 +1,23 @@
+{
+  "name": "sidescroll-shootah",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/bundle.js",
+  "scripts": {
+    "start": "webpack --watch",
+    "dev": "webpack-dev-server --progress --inline --port 1234"
+  },
+  "author": "",
+  "license": "DBAD",
+  "devDependencies": {
+    "@types/pixi.js": "^4.4.2",
+    "brfs": "^1.4.3",
+    "transform-loader": "^0.2.4",
+    "ts-loader": "^2.0.3",
+    "typescript": "^2.2.2",
+    "webpack": "^2.3.3"
+  },
+  "dependencies": {
+    "pixi.js": "^4.4.4"
+  }
+}
