@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js';
+
 import State from './State';
 
 export default class Game {
@@ -25,5 +26,40 @@ export default class Game {
 		Game.currentStateName = stateName;
 		Game.states[stateName].ticker.start();
 		Game.app.stage.addChild(Game.states[stateName]);
+	}
+
+	public static keyboard(keyCode: number) {
+		let key: any = {};
+		key.code = keyCode;
+		key.isDown = false;
+		key.isUp = true;
+		key.press = undefined;
+		key.release = undefined;
+
+		key.upHandler = function(event: any) {
+			if (event.keyCode === key.code) {
+				if (key.isDown && key.release) key.release();
+				key.isDown = false;
+				key.isUp = true;
+			}
+			event.preventDefault();
+		};
+
+		key.downHandler = function(event: any) {
+			if (event.keyCode === key.code) {
+				if (key.isUp && key.press) key.press();
+				key.isDown = true;
+				key.isUp = false;
+			}
+			event.preventDefault();
+		};
+
+		window.addEventListener(
+			"keydown", key.downHandler.bind(key), false
+		);
+		window.addEventListener(
+			"keyup", key.upHandler.bind(key), false
+		);
+		return key;
 	}
 }

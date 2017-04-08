@@ -1,9 +1,12 @@
 import * as PIXI from 'pixi.js';
 
 import Game from './Game';
+import Ship from './Ship';
 import State from './State';
 
 export default class GameState extends State {
+	private ship: Ship;
+
 	constructor(name: string) {
 		super(name);
 
@@ -21,10 +24,15 @@ export default class GameState extends State {
 		planet.y = 600 - 252;
 		this.addChild(planet);
 
+		this.ship = new Ship();
+		this.addChild(this.ship.sprite);
+
 		this.ticker.add((delta) => {
 			console.log('GameState ticker');
 			planet.tilePosition.x -= 3;
 			space.tilePosition.x -= 0.05;
+
+			this.ship.update();
 		}, this);
 	}
 }
