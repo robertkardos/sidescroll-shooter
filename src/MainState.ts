@@ -22,7 +22,6 @@ export default class MainState extends State {
 
 
 		this.ticker.add((delta) => {
-			console.log('MainState ticker');
 			if (this.alpha < 1) {
 				this.alpha += 0.01;
 			}

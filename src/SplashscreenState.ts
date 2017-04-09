@@ -17,7 +17,6 @@ export default class SplashscreenState extends State {
 		this.addChild(splashscreen);
 
 		this.ticker.add((delta) => {
-			console.log('SplashscreenState ticker');
 			if (this.runningSince + this.ticker.elapsedMS > 2000) {
 				splashscreen.alpha -= 0.01;
 				blurFilter.blur += 0.1;
