@@ -1,20 +1,25 @@
 import * as PIXI from 'pixi.js';
 
+import Enemy from './Enemy';
 import Game from './Game';
 import Player from './Player';
-import Enemy from './Enemy';
+import Rocket from './Rocket';
 import Ship from './Ship';
 import State from './State';
 
 export default class GameState extends State {
 	private player: Player;
 	private enemies: Array<Enemy>;
+	private projectiles: Array<Rocket>;
 	private enemySpawnTimer: number;
 
 	constructor(name: string) {
 		super(name);
 
+		this.setupControls();
 		this.enemies = [];
+		this.projectiles = [];
+
 		let spaceTexture = PIXI.Texture.fromImage('assets/space.png');
 		let space = new PIXI.extras.TilingSprite(spaceTexture, 800, 600);
 		this.addChild(space);
@@ -24,7 +29,6 @@ export default class GameState extends State {
 			planetBaseTexture,
 			new PIXI.Rectangle(0, 0, 959, 252)
 		);
-
 		let planet = new PIXI.extras.TilingSprite(planetTexture, 800, 252);
 		planet.y = 600 - 252;
 		this.addChild(planet);
@@ -46,6 +50,15 @@ export default class GameState extends State {
 				return isEnemyOnScreen;
 			});
 
+			this.projectiles = this.projectiles.filter((projectile) => {
+				let isProjectileOnScreen = projectile.update();
+				return isProjectileOnScreen;
+			});
+
+			for (let projectile of this.projectiles) {
+				projectile.checkForCollisions();
+			}
+
 			planet.tilePosition.x -= 3;
 			space.tilePosition.x -= 0.05;
 
@@ -59,5 +72,55 @@ export default class GameState extends State {
 		this.enemySpawnTimer = 0;
 		this.enemies.push(enemy);
 		this.addChild(enemy.sprite);
+	}
+
+	public setupControls() {
+		let space = Game.keyboard(32);
+		let up = Game.keyboard(87);
+		let right = Game.keyboard(68);
+		let down = Game.keyboard(83);
+		let left = Game.keyboard(65);
+
+		space.press = () => {
+			if (!this.player.onCooldown()) {
+				let rocket = this.player.shoot();
+				this.projectiles.push(rocket);
+				this.addChild(rocket.sprite);
+			};
+		};
+
+		up.press = () => {
+			this.player.velocity.y = -3;
+		};
+		right.press = () => {
+			this.player.velocity.x = 3;
+		};
+		down.press = () => {
+			this.player.velocity.y = 3;
+		};
+		left.press = () => {
+			this.player.velocity.x = -3;
+		};
+
+		up.release = () => {
+			if (!down.isDown) {
+				this.player.velocity.y = 0;
+			}
+		};
+		right.release = () => {
+			if (!left.isDown) {
+				this.player.velocity.x = 0;
+			}
+		};
+		down.release = () => {
+			if (!up.isDown) {
+				this.player.velocity.y = 0;
+			}
+		};
+		left.release = () => {
+			if (!right.isDown) {
+				this.player.velocity.x = 0;
+			}
+		};
 	}
 }

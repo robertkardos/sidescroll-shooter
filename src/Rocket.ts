@@ -14,7 +14,6 @@ export default class Rocket extends PIXI.DisplayObject {
 		this.sprite = new PIXI.Sprite(this.texture);
 		position.y = position.y - this.sprite.height / 2;
 		this.sprite.position = position;
-		Game.app.stage.addChild(this.sprite);
 	}
 
 	public update(): boolean {
@@ -24,5 +23,8 @@ export default class Rocket extends PIXI.DisplayObject {
 		}
 		this.sprite.destroy();
 		return false;
+	}
+
+	public checkForCollisions() {
 	}
 }
