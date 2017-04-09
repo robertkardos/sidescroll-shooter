@@ -13,7 +13,4 @@ let gameState: GameState = new GameState('game');
 let mainState: MainState = new MainState('main');
 let splashscreenState: SplashscreenState = new SplashscreenState('splashscreen');
 
-let ship = new Ship();
-
 Game.switchToState('splashscreen');
-Game.app.stage.addChild(ship);

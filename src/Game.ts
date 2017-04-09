@@ -35,8 +35,8 @@ export default class Game {
 		key.isUp = true;
 		key.press = undefined;
 		key.release = undefined;
-
-		key.upHandler = function(event: any) {
+		key.upHandler = (event: any) => {
+			console.log('upHandler')
 			if (event.keyCode === key.code) {
 				if (key.isDown && key.release) key.release();
 				key.isDown = false;
@@ -45,7 +45,8 @@ export default class Game {
 			event.preventDefault();
 		};
 
-		key.downHandler = function(event: any) {
+		key.downHandler = (event: any) => {
+			console.log('downHandler')
 			if (event.keyCode === key.code) {
 				if (key.isUp && key.press) key.press();
 				key.isDown = true;
