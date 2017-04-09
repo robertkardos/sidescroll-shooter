@@ -20,9 +20,9 @@ export default class Rocket extends PIXI.DisplayObject {
 	public update(): boolean {
 		this.sprite.position.x += this.velocity;
 		if (this.sprite.position.x < 800) {
-			Game.app.stage.removeChild(this);
 			return true;
 		}
+		this.sprite.destroy();
 		return false;
 	}
 }
