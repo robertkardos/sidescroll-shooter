@@ -5,6 +5,7 @@ import Rocket from './Rocket';
 
 export default class Ship extends PIXI.DisplayObject {
 	public velocity: PIXI.Point;
+	private cooldown: number;
 	private texture: PIXI.Texture;
 	public sprite: PIXI.Sprite;
 	private projectiles: Array<Rocket>;
@@ -12,13 +13,15 @@ export default class Ship extends PIXI.DisplayObject {
 	constructor() {
 		super();
 		this.velocity = new PIXI.Point(0, 0);
+		this.cooldown = 20;
 		this.texture = PIXI.Texture.fromImage('assets/kestrel.png');
 		this.sprite = new PIXI.Sprite(this.texture);
 		this.setupControls();
 		this.projectiles = [];
 	}
 
-	public update() {
+	public update(delta: number) {
+		this.cooldown += delta;
 		this.sprite.position.x += this.velocity.x;
 		this.sprite.position.y += this.velocity.y;
 		this.projectiles = this.projectiles.filter((projectile) => {
@@ -28,12 +31,16 @@ export default class Ship extends PIXI.DisplayObject {
 	}
 
 	private shoot() {
-		let rocketPosition: PIXI.Point = new PIXI.Point(
-			this.sprite.position.x + this.sprite.width - 10,
-			this.sprite.position.y + this.sprite.height / 2,
-		)
-		let rocket = new Rocket(rocketPosition);
-		this.projectiles.push(rocket);
+		if (this.cooldown >= 20) {
+			let rocketPosition: PIXI.Point = new PIXI.Point(
+				this.sprite.position.x + this.sprite.width - 10,
+				this.sprite.position.y + this.sprite.height / 2,
+			)
+			let rocket = new Rocket(rocketPosition);
+			this.projectiles.push(rocket);
+
+			this.cooldown = 0;
+		}
 	}
 
 	public setupControls() {
@@ -42,7 +49,7 @@ export default class Ship extends PIXI.DisplayObject {
 		let right = Game.keyboard(39);
 		let down = Game.keyboard(40);
 		let left = Game.keyboard(37);
-		
+
 		space.press = () => {
 			this.shoot();
 		};

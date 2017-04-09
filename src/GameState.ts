@@ -27,12 +27,12 @@ export default class GameState extends State {
 		this.ship = new Ship();
 		this.addChild(this.ship.sprite);
 
-		this.ticker.add((delta) => {
+		this.ticker.add((delta: number) => {
 			console.log('GameState ticker');
 			planet.tilePosition.x -= 3;
 			space.tilePosition.x -= 0.05;
 
-			this.ship.update();
+			this.ship.update(delta);
 		}, this);
 	}
 }
