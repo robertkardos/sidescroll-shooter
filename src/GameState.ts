@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js';
 
 import Enemy from './Enemy';
 import Game from './Game';
+import Particle from './Particle';
 import Player from './Player';
 import Rocket from './Rocket';
 import Ship from './Ship';
@@ -12,7 +13,7 @@ export default class GameState extends State {
 	private player: Player;
 	private enemies: Array<Enemy>;
 	private projectiles: Array<Rocket>;
-	private particles: Array<PIXI.Graphics>;
+	private particles: Array<Particle>;
 	private enemySpawnTimer: number;
 
 	constructor(name: string) {
@@ -54,29 +55,23 @@ export default class GameState extends State {
 			space.tilePosition.x -= 0.05;
 			this.player.update(delta);
 
+			this.particles = this.particles
+				.filter((particle) => {
+					let isParticlesOnScreen = particle.update(delta);
+					return isParticlesOnScreen;
+				});
+
 			this.enemies = this.enemies
 				.filter((enemy) => {
 					let isEnemyOnScreen = enemy.update(delta);
 					return isEnemyOnScreen;
-				})
-				// .filter((enemy) => {
-				// 	if (!enemy.collided) {
-				// 		return true;
-				// 	}
-				// 	enemy.sprite.destroy();
-				// });
+				});
 
 			this.projectiles = this.projectiles
 				.filter((projectile) => {
 					let isProjectileOnScreen = projectile.update();
 					return isProjectileOnScreen;
-				})
-				// .filter((projectile) => {
-				// 	if (!projectile.collided) {
-				// 		return true;
-				// 	}
-				// 	projectile.sprite.destroy();
-				// });
+				});
 		}, this);
 	}
 
@@ -88,19 +83,14 @@ export default class GameState extends State {
 					projectile.sprite.alpha = 0.5;
 					let particleContainer = new PIXI.particles.ParticleContainer();
 
-					for (let i = 0; i < 100; ++i) {
-						var graphics = new PIXI.Graphics();
-
-						graphics.lineStyle(2, 0xf1381f, 1);
-						graphics.beginFill(0xFF966B, 1);
-						graphics.drawRect(
-							projectile.sprite.position.x + 30 * Math.random(),
-							projectile.sprite.position.y + 30 * Math.random(),
-							5,
-							5
+					for (let i = 0; i < 60; ++i) {
+						var particle = new Particle(
+							projectile.sprite.position,
+							enemy.velocity
 						);
 
-						this.addChild(graphics);
+						this.particles.push(particle);
+						this.addChild(particle);
 					}
 
 					enemy.collided = true;
