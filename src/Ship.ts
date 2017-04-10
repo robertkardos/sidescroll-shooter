@@ -9,14 +9,12 @@ export default class Ship extends PIXI.Container {
 	private texture: PIXI.Texture;
 	public sprite: PIXI.Sprite;
 	public collided: boolean;
-	public isExploding: boolean;
 	public exploded: boolean;
 	public explosion: Explosion;
 	public explosionTimer: number;
 
 	constructor(imageSrc: string) {
 		super();
-		this.isExploding = false;
 		this.exploded = false;
 		this.texture = PIXI.Texture.fromImage(imageSrc);
 		this.sprite = new PIXI.Sprite(this.texture);
@@ -26,9 +24,6 @@ export default class Ship extends PIXI.Container {
 
 	public update(delta: number) {
 		if (this.collided) {
-			if (!this.isExploding) {
-				this.explode();
-			}
 			let isStillExploding = this.explosion.update(delta);
 			if (isStillExploding) {
 				console.log('destroyed')
@@ -42,9 +37,8 @@ export default class Ship extends PIXI.Container {
 	}
 
 	public explode() {
-		console.log('explode');
-		this.explosion = new Explosion(new PIXI.Point(this.x, this.y));
+		this.collided = true;
+		this.explosion = new Explosion(new PIXI.Point(this.x, this.y), 200);
 		this.addChild(this.explosion);
-		this.isExploding = true;
 	}
 }

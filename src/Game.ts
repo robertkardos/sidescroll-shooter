@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 
 import State from './State';
+import StateFactory from './StateFactory';
 
 export default class Game {
 	private static states: any;
@@ -10,9 +11,13 @@ export default class Game {
 	private constructor() {}
 
 	public static create() {
-		Game.states = [];
+		Game.states = {};
 		Game.app = new PIXI.Application(800, 600, {backgroundColor : 0x000000});
 		document.body.appendChild(Game.app.view);
+
+		Game.addState(StateFactory.create('splashscreen'));
+		Game.addState(StateFactory.create('main'));
+		Game.addState(StateFactory.create('game'));
 	}
 
 	public static addState(newState: State) {
@@ -22,8 +27,10 @@ export default class Game {
 
 	public static switchToState(stateName: string) {
 		Game.states[Game.currentStateName].ticker.stop();
+		delete Game.states[Game.currentStateName];
 		Game.app.stage.removeChild(Game.states[Game.currentStateName]);
-		Game.currentStateName = stateName;
+		
+		Game.addState(StateFactory.create(stateName));
 		Game.states[stateName].ticker.start();
 		Game.app.stage.addChild(Game.states[stateName]);
 	}

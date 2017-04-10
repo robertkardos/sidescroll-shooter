@@ -67,29 +67,11 @@ export default class GameState extends State {
 					let isExplosionOnScreen = explosion.update(delta);
 					return isExplosionOnScreen;
 				});
-				// .filter((explosion) => {
-				// 	let isExplosionOnScreen = explosion.update(delta);
-				// 	return isExplosionOnScreen;
-				// });
 
 			this.enemies = this.enemies
 				.filter((enemy) => {
 					let isEnemyOnScreen = enemy.update(delta);
 					return isEnemyOnScreen;
-				});
-
-			this.enemies.forEach((enemy) => {
-					if (!enemy.collided && !this.player.collided) {
-						let isPlayerColliding = Util.areTheyColliding(this.player, enemy);
-						if (isPlayerColliding) {
-							// let explosion = new Explosion(this.player.sprite.position);
-							// this.explosions.push(explosion);
-							// this.addChild(explosion);
-
-							enemy.collided = true;
-							this.player.collided = true;
-						}
-					}
 				});
 
 			this.projectiles = this.projectiles
@@ -101,8 +83,16 @@ export default class GameState extends State {
 	}
 
 	detectCollisions() {
-		for (let projectile of this.projectiles) {
-			for (let enemy of this.enemies) {
+		this.enemies.forEach((enemy) => {
+			if (!enemy.collided && !this.player.collided) {
+				let isPlayerColliding = Util.areTheyColliding(this.player, enemy);
+				if (isPlayerColliding) {
+					enemy.explode();
+					this.player.explode();
+				}
+			}
+
+			for (let projectile of this.projectiles) {
 				let areTheyColliding = Util.areTheyColliding(projectile, enemy);
 				if (areTheyColliding) {
 					projectile.alpha = 0.5;
@@ -111,18 +101,18 @@ export default class GameState extends State {
 					this.explosions.push(explosion);
 					this.addChild(explosion);
 
-					enemy.collided = true;
+					enemy.explode();
 					projectile.collided = true;
 				} else {
 					projectile.alpha = 1;
 				}
 			}
-		}
+		});
+
 	}
 
 	spawnEnemy() {
 		let enemy = new Enemy();
-
 		this.enemySpawnTimer = 0;
 		this.enemies.push(enemy);
 		this.addChild(enemy);
