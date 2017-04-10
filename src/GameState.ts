@@ -15,34 +15,39 @@ export default class GameState extends State {
 	private enemies: Array<Enemy>;
 	private projectiles: Array<Rocket>;
 	private explosions: Array<Explosion>;
+	private space: PIXI.extras.TilingSprite;
+	private planet: PIXI.extras.TilingSprite;
+
+	private pressedKeys: Array<boolean>;
 	private enemySpawnTimer: number;
 
 	constructor(name: string) {
 		super(name);
 
-		this.setupControls();
 		this.enemies = [];
 		this.projectiles = [];
 		this.explosions = [];
 
+		this.pressedKeys = [];
+
 		let spaceTexture = PIXI.Texture.fromImage('assets/space.png');
-		let space = new PIXI.extras.TilingSprite(spaceTexture, 800, 600);
-		this.addChild(space);
+		this.space = new PIXI.extras.TilingSprite(spaceTexture, 800, 600);
+		this.container.addChild(this.space);
 
 		let planetBaseTexture = PIXI.BaseTexture.fromImage('assets/planet.png');
 		let planetTexture = new PIXI.Texture(
 			planetBaseTexture,
 			new PIXI.Rectangle(0, 0, 959, 252)
 		);
-		let planet = new PIXI.extras.TilingSprite(planetTexture, 800, 252);
-		planet.y = 600 - 252;
-		this.addChild(planet);
+		this.planet = new PIXI.extras.TilingSprite(planetTexture, 800, 252);
+		this.planet.y = 600 - 252;
+		this.container.addChild(this.planet);
 
-		this.player = new Player();
-		this.addChild(this.player);
-		// this.addChild(this.player.sprite);
 
 		this.enemySpawnTimer = 0;
+
+		this.player = new Player();
+		this.addGameObject(this.player);
 
 		this.ticker.add((delta: number) => {
 			this.enemySpawnTimer += delta;
@@ -51,9 +56,9 @@ export default class GameState extends State {
 			}
 
 			this.detectCollisions();
+			this.scrollBackground();
 
-			planet.tilePosition.x -= 3;
-			space.tilePosition.x -= 0.05;
+			this.move();
 
 			if (this.player && !this.player.update(delta)) {
 				delete this.player;
@@ -82,6 +87,11 @@ export default class GameState extends State {
 		}, this);
 	}
 
+	scrollBackground() {
+		this.planet.tilePosition.x -= 3;
+		this.space.tilePosition.x -= 0.05;
+	}
+
 	detectCollisions() {
 		this.enemies.forEach((enemy) => {
 			if (!enemy.collided && !this.player.collided) {
@@ -95,16 +105,16 @@ export default class GameState extends State {
 			for (let projectile of this.projectiles) {
 				let areTheyColliding = Util.areTheyColliding(projectile, enemy);
 				if (areTheyColliding) {
-					projectile.alpha = 0.5;
+					projectile.container.alpha = 0.5;
 
-					let explosion = new Explosion(projectile.position, 50, enemy.velocity);
+					let explosion = new Explosion(projectile.container.position, 50, enemy.velocity);
 					this.explosions.push(explosion);
-					this.addChild(explosion);
+					this.container.addChild(explosion);
 
 					enemy.explode();
 					projectile.collided = true;
 				} else {
-					projectile.alpha = 1;
+					projectile.container.alpha = 1;
 				}
 			}
 		});
@@ -115,56 +125,39 @@ export default class GameState extends State {
 		let enemy = new Enemy();
 		this.enemySpawnTimer = 0;
 		this.enemies.push(enemy);
-		this.addChild(enemy);
+		this.addGameObject(enemy);
 	}
 
-	public setupControls() {
-		let space = Game.keyboard(32);
-		let up = Game.keyboard(87);
-		let right = Game.keyboard(68);
-		let down = Game.keyboard(83);
-		let left = Game.keyboard(65);
+	public keyUpHandler(event: KeyboardEvent) {
+		this.pressedKeys[event.keyCode] = false;
+	}
 
-		space.press = () => {
+	public keyDownHandler(event: KeyboardEvent) {
+		this.pressedKeys[event.keyCode] = true;
+	}
+
+	move() {
+		this.player.velocity.set(0);
+
+		if (this.pressedKeys[32]) {
 			if (!this.player.onCooldown()) {
 				let rocket = this.player.shoot();
 				this.projectiles.push(rocket);
-				this.addChild(rocket);
+				this.addGameObject(rocket);
 			};
-		};
+		}
 
-		up.press = () => {
+		if (this.pressedKeys[87]) {
 			this.player.velocity.y = -3;
-		};
-		right.press = () => {
+		}
+		if (this.pressedKeys[68]) {
 			this.player.velocity.x = 3;
-		};
-		down.press = () => {
+		}
+		if (this.pressedKeys[83]) {
 			this.player.velocity.y = 3;
-		};
-		left.press = () => {
+		}
+		if (this.pressedKeys[65]) {
 			this.player.velocity.x = -3;
-		};
-
-		up.release = () => {
-			if (!down.isDown) {
-				this.player.velocity.y = 0;
-			}
-		};
-		right.release = () => {
-			if (!left.isDown) {
-				this.player.velocity.x = 0;
-			}
-		};
-		down.release = () => {
-			if (!up.isDown) {
-				this.player.velocity.y = 0;
-			}
-		};
-		left.release = () => {
-			if (!right.isDown) {
-				this.player.velocity.x = 0;
-			}
-		};
-	}
+		}
+	};
 }

@@ -8,13 +8,13 @@ export default class Util {
 		let collision = false;
 
 		let r1MiddlePoint = new PIXI.Point(
-			r1.x + (r1.sprite.width / 2),
-			r1.y + (r1.sprite.height / 2)
+			r1.container.x + (r1.sprite.width / 2),
+			r1.container.y + (r1.sprite.height / 2)
 		);
 
 		let r2MiddlePoint = new PIXI.Point(
-			r2.x + (r2.sprite.width / 2),
-			r2.y + (r2.sprite.height / 2)
+			r2.container.x + (r2.sprite.width / 2),
+			r2.container.y + (r2.sprite.height / 2)
 		);
 
 		let distanceOnX = Math.abs(r1MiddlePoint.x - r2MiddlePoint.x);

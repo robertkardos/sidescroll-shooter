@@ -10,8 +10,8 @@ export default class Enemy extends Ship {
 
 	constructor() {
 		super('assets/torus.png');
-		this.x = 800;
-		this.y = Math.random() * (600 - this.sprite.height);
+		this.container.x = 800;
+		this.container.y = Math.random() * (600 - this.sprite.height);
 
 		this.movementAmplitude = Math.random() * 5 + 2;
 		this.movementPeriod = Math.random() * 130 + 50;
@@ -23,16 +23,12 @@ export default class Enemy extends Ship {
 
 	public update(delta: number) {
 		let isAlive = super.update(delta);
-		if (!isAlive || this.x < 0 - this.sprite.width) {
+		if (!isAlive || this.container.x < 0 - this.sprite.width) {
 			return false;
 		}
-		this.velocity.y = this.movementAmplitude * Math.sin(this.x / this.movementPeriod);
+		this.velocity.y = this.movementAmplitude * Math.sin(this.container.x / this.movementPeriod);
 		this.velocity.x = this.movementOnX;
 
 		return true;
-		// if (this.x < 0 - this.sprite.width) {
-		// 	this.destroy();
-		// 	return false;
-		// }
 	}
 }

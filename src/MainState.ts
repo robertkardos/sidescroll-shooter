@@ -9,7 +9,7 @@ export default class MainState extends State {
 
 		let menuTexture: PIXI.Texture = PIXI.Texture.fromImage('assets/menu.png');
 		let menuBackground = new PIXI.extras.TilingSprite(menuTexture, 800, 600);
-		this.addChild(menuBackground);
+		this.container.addChild(menuBackground);
 
 		let gameButtonTexture: PIXI.Texture = PIXI.Texture.fromImage('assets/game.png');
 		let gameButton = new PIXI.Sprite(gameButtonTexture);
@@ -17,16 +17,15 @@ export default class MainState extends State {
 		gameButton.buttonMode = true;
 		gameButton.on('pointerdown', this.onPlayButtonClick);
 
-		this.addChild(gameButton);
-		this.alpha = 0;
-
+		this.container.addChild(gameButton);
+		this.container.alpha = 0;
 
 		this.ticker.add((delta) => {
-			if (this.alpha < 1) {
-				this.alpha += 0.01;
+			if (this.container.alpha < 1) {
+				this.container.alpha += 0.01;
 			}
 
-			menuBackground.tilePosition.x -= 20 * (1 - this.alpha);
+			menuBackground.tilePosition.x -= 20 * (1 - this.container.alpha);
 			menuBackground.tilePosition.x -= 10;
 		}, this);
 	}

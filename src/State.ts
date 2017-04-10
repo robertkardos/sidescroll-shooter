@@ -1,17 +1,22 @@
 import * as PIXI from 'pixi.js';
 
 import Game from './Game';
+import GameObject from './GameObject';
 
-export default class State extends PIXI.Container {
+export default class State {
 	public name: string;
-	protected ticker: PIXI.ticker.Ticker;
+	public container: PIXI.Container;
 	protected runningSince: number;
+	protected ticker: PIXI.ticker.Ticker;
 
 	constructor(name: string) {
-		super();
 		this.name = name;
+		this.container = new PIXI.Container();
 		this.runningSince = 0;
 		this.ticker = new PIXI.ticker.Ticker();
-		Game.addState(this);
+	}
+
+	public addGameObject(gameObject: GameObject) {
+		this.container.addChild(gameObject.container);
 	}
 }

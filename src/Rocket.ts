@@ -2,29 +2,31 @@ import * as PIXI from 'pixi.js';
 
 import Enemy from './Enemy';
 import Game from './Game';
+import GameObject from './GameObject';
 
-export default class Rocket extends PIXI.Container {
-	public velocity: number;
+export default class Rocket implements GameObject {
+	public velocity: PIXI.Point;
 	private texture: PIXI.Texture;
+	public container: PIXI.Container;
 	public sprite: PIXI.Sprite;
 	public collided: boolean;
 
 	constructor(position: PIXI.Point) {
-		super();
-		this.velocity = 10;
+		this.container = new PIXI.Container();
+		this.velocity = new PIXI.Point(10);
 		this.collided = false;
 		this.texture = PIXI.Texture.fromImage('assets/rocket.png');
 		this.sprite = new PIXI.Sprite(this.texture);
 		position.y = position.y - this.sprite.height / 2;
-		this.position = position;
+		this.container.position = position;
 
-		this.addChild(this.sprite);
+		this.container.addChild(this.sprite);
 	}
 
-	public update(): boolean {
-		this.position.x += this.velocity;
-		if (this.position.x > 800 || this.collided) {
-			this.destroy();
+	public update() {
+		this.container.position.x += this.velocity.x;
+		if (this.container.position.x > 800 || this.collided) {
+			this.container.destroy();
 			return false;
 		}
 		return true;
