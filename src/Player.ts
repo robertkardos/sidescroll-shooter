@@ -15,14 +15,20 @@ export default class Player extends Ship {
 	}
 
 	public update(delta: number) {
-		super.update(delta);
+		let isAlive = super.update(delta);
+		if (!isAlive) {
+			return false;
+		}
+
 		this.cooldown += delta;
+
+		return true;
 	}
 
 	public shoot() {
 		let rocketPosition: PIXI.Point = new PIXI.Point(
-			this.sprite.position.x + this.sprite.width - 10,
-			this.sprite.position.y + this.sprite.height / 2,
+			this.x + this.sprite.width - 10,
+			this.y + this.sprite.height / 2,
 		);
 		let rocket = new Rocket(rocketPosition);
 		this.cooldown = 0;

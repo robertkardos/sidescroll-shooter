@@ -39,13 +39,13 @@ export default class GameState extends State {
 		this.addChild(planet);
 
 		this.player = new Player();
-		this.addChild(this.player.sprite);
+		this.addChild(this.player);
+		// this.addChild(this.player.sprite);
 
 		this.enemySpawnTimer = 0;
 
 		this.ticker.add((delta: number) => {
 			this.enemySpawnTimer += delta;
-
 			if (this.enemySpawnTimer > 120) {
 				this.spawnEnemy();
 			}
@@ -54,7 +54,13 @@ export default class GameState extends State {
 
 			planet.tilePosition.x -= 3;
 			space.tilePosition.x -= 0.05;
-			this.player.update(delta);
+
+			if (this.player && !this.player.update(delta)) {
+				delete this.player;
+				alert('getrekt');
+				Game.switchToState('main');
+				return;
+			}
 
 			this.explosions = this.explosions
 				.filter((explosion) => {
@@ -73,10 +79,15 @@ export default class GameState extends State {
 				});
 
 			this.enemies.forEach((enemy) => {
-					if (!enemy.collided) {
+					if (!enemy.collided && !this.player.collided) {
 						let isPlayerColliding = Util.areTheyColliding(this.player, enemy);
 						if (isPlayerColliding) {
-							console.log('DIEDED');
+							// let explosion = new Explosion(this.player.sprite.position);
+							// this.explosions.push(explosion);
+							// this.addChild(explosion);
+
+							enemy.collided = true;
+							this.player.collided = true;
 						}
 					}
 				});
@@ -94,16 +105,16 @@ export default class GameState extends State {
 			for (let enemy of this.enemies) {
 				let areTheyColliding = Util.areTheyColliding(projectile, enemy);
 				if (areTheyColliding) {
-					projectile.sprite.alpha = 0.5;
+					projectile.alpha = 0.5;
 
-					let explosion = new Explosion(projectile.sprite.position, 50, enemy.velocity);
+					let explosion = new Explosion(projectile.position, 50, enemy.velocity);
 					this.explosions.push(explosion);
 					this.addChild(explosion);
 
 					enemy.collided = true;
 					projectile.collided = true;
 				} else {
-					projectile.sprite.alpha = 1;
+					projectile.alpha = 1;
 				}
 			}
 		}
@@ -114,7 +125,7 @@ export default class GameState extends State {
 
 		this.enemySpawnTimer = 0;
 		this.enemies.push(enemy);
-		this.addChild(enemy.sprite);
+		this.addChild(enemy);
 	}
 
 	public setupControls() {
@@ -128,7 +139,7 @@ export default class GameState extends State {
 			if (!this.player.onCooldown()) {
 				let rocket = this.player.shoot();
 				this.projectiles.push(rocket);
-				this.addChild(rocket.sprite);
+				this.addChild(rocket);
 			};
 		};
 

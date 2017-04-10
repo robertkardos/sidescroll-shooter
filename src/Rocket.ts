@@ -3,7 +3,7 @@ import * as PIXI from 'pixi.js';
 import Enemy from './Enemy';
 import Game from './Game';
 
-export default class Rocket extends PIXI.DisplayObject {
+export default class Rocket extends PIXI.Container {
 	public velocity: number;
 	private texture: PIXI.Texture;
 	public sprite: PIXI.Sprite;
@@ -16,13 +16,15 @@ export default class Rocket extends PIXI.DisplayObject {
 		this.texture = PIXI.Texture.fromImage('assets/rocket.png');
 		this.sprite = new PIXI.Sprite(this.texture);
 		position.y = position.y - this.sprite.height / 2;
-		this.sprite.position = position;
+		this.position = position;
+
+		this.addChild(this.sprite);
 	}
 
 	public update(): boolean {
-		this.sprite.position.x += this.velocity;
-		if (this.sprite.position.x > 800 || this.collided) {
-			this.sprite.destroy();
+		this.position.x += this.velocity;
+		if (this.position.x > 800 || this.collided) {
+			this.destroy();
 			return false;
 		}
 		return true;

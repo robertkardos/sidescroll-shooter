@@ -15,14 +15,13 @@ export default class Explosion extends PIXI.Container {
 		super();
 
 		this.particles = [];
-
+		this.x = position.x;
+		this.y = position.y;
 		// let xRandomRange = velocity.x / 2;
 		// let yRandomRange = velocity.y / 2;
 
 		for (let i = 0; i < amount; i++) {
-			let particle = new Particle(
-				position
-			);
+			let particle = new Particle();
 
 			this.particles.push(particle);
 			this.addChild(particle);
@@ -35,8 +34,8 @@ export default class Explosion extends PIXI.Container {
 	}
 
 	public update(delta: number) {
-		this.position.x += this.velocity.x;
-		this.position.y += this.velocity.y;
+		this.x += this.velocity.x;
+		this.y += this.velocity.y;
 
 		for (let particle of this.particles) {
 			particle.update(delta);
@@ -45,6 +44,7 @@ export default class Explosion extends PIXI.Container {
 		this.alpha -= 0.01;
 		if (this.alpha === 0) {
 			this.destroy();
+			console.log('DESTROYED E')
 			return false;
 		}
 		return true;

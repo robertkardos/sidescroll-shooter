@@ -5,7 +5,7 @@ export default class Ship extends PIXI.Graphics {
 	private graphics: PIXI.Graphics;
 
 	constructor(
-		position: PIXI.Point,
+		// position: PIXI.Point,
 		velocity: PIXI.Point = new PIXI.Point(0)
 	) {
 		super();
@@ -13,8 +13,10 @@ export default class Ship extends PIXI.Graphics {
 		this.lineStyle(2, +0xff381f, 1);
 		this.beginFill(0xFFf99B, 1);
 		this.drawRect(
-			position.x + 20,
-			position.y + 20,
+			// position.x + 20,
+			// position.y + 20,
+			0,
+			0,
 			8,
 			8
 		);
