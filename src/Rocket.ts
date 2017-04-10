@@ -7,10 +7,12 @@ export default class Rocket extends PIXI.DisplayObject {
 	public velocity: number;
 	private texture: PIXI.Texture;
 	public sprite: PIXI.Sprite;
+	public collided: boolean;
 
 	constructor(position: PIXI.Point) {
 		super();
 		this.velocity = 10;
+		this.collided = false;
 		this.texture = PIXI.Texture.fromImage('assets/rocket.png');
 		this.sprite = new PIXI.Sprite(this.texture);
 		position.y = position.y - this.sprite.height / 2;
@@ -19,11 +21,11 @@ export default class Rocket extends PIXI.DisplayObject {
 
 	public update(): boolean {
 		this.sprite.position.x += this.velocity;
-		if (this.sprite.position.x < 800) {
-			return true;
+		if (this.sprite.position.x > 800 || this.collided) {
+			this.sprite.destroy();
+			return false;
 		}
-		this.sprite.destroy();
-		return false;
+		return true;
 	}
 
 	public isCollidingWith(enemy: Enemy) {
