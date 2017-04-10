@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 
 import Enemy from './Enemy';
+import Explosion from './Explosion';
 import Game from './Game';
 import Particle from './Particle';
 import Player from './Player';
@@ -13,7 +14,7 @@ export default class GameState extends State {
 	private player: Player;
 	private enemies: Array<Enemy>;
 	private projectiles: Array<Rocket>;
-	private particles: Array<Particle>;
+	private explosions: Array<Explosion>;
 	private enemySpawnTimer: number;
 
 	constructor(name: string) {
@@ -22,7 +23,7 @@ export default class GameState extends State {
 		this.setupControls();
 		this.enemies = [];
 		this.projectiles = [];
-		this.particles = [];
+		this.explosions = [];
 
 		let spaceTexture = PIXI.Texture.fromImage('assets/space.png');
 		let space = new PIXI.extras.TilingSprite(spaceTexture, 800, 600);
@@ -55,11 +56,15 @@ export default class GameState extends State {
 			space.tilePosition.x -= 0.05;
 			this.player.update(delta);
 
-			this.particles = this.particles
-				.filter((particle) => {
-					let isParticlesOnScreen = particle.update(delta);
-					return isParticlesOnScreen;
+			this.explosions = this.explosions
+				.filter((explosion) => {
+					let isExplosionOnScreen = explosion.update(delta);
+					return isExplosionOnScreen;
 				});
+				// .filter((explosion) => {
+				// 	let isExplosionOnScreen = explosion.update(delta);
+				// 	return isExplosionOnScreen;
+				// });
 
 			this.enemies = this.enemies
 				.filter((enemy) => {
@@ -68,9 +73,11 @@ export default class GameState extends State {
 				});
 
 			this.enemies.forEach((enemy) => {
-					let isPlayerColliding = Util.areTheyColliding(this.player, enemy);
-					if (isPlayerColliding) {
-						console.log('DIEDED');
+					if (!enemy.collided) {
+						let isPlayerColliding = Util.areTheyColliding(this.player, enemy);
+						if (isPlayerColliding) {
+							console.log('DIEDED');
+						}
 					}
 				});
 
@@ -88,17 +95,10 @@ export default class GameState extends State {
 				let areTheyColliding = Util.areTheyColliding(projectile, enemy);
 				if (areTheyColliding) {
 					projectile.sprite.alpha = 0.5;
-					let particleContainer = new PIXI.particles.ParticleContainer();
 
-					for (let i = 0; i < 60; ++i) {
-						var particle = new Particle(
-							projectile.sprite.position,
-							enemy.velocity
-						);
-
-						this.particles.push(particle);
-						this.addChild(particle);
-					}
+					let explosion = new Explosion(projectile.sprite.position, 50, enemy.velocity);
+					this.explosions.push(explosion);
+					this.addChild(explosion);
 
 					enemy.collided = true;
 					projectile.collided = true;
