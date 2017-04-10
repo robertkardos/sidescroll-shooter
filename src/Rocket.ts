@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js';
 
+import Enemy from './Enemy';
 import Game from './Game';
 
 export default class Rocket extends PIXI.DisplayObject {
@@ -25,6 +26,7 @@ export default class Rocket extends PIXI.DisplayObject {
 		return false;
 	}
 
-	public checkForCollisions() {
+	public isCollidingWith(enemy: Enemy) {
+
 	}
 }

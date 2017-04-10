@@ -6,6 +6,7 @@ import Player from './Player';
 import Rocket from './Rocket';
 import Ship from './Ship';
 import State from './State';
+import Util from './Util';
 
 export default class GameState extends State {
 	private player: Player;
@@ -45,25 +46,35 @@ export default class GameState extends State {
 				this.spawnEnemy();
 			}
 
+			this.detectCollisions();
+
+			planet.tilePosition.x -= 3;
+			space.tilePosition.x -= 0.05;
+			this.player.update(delta);
+
 			this.enemies = this.enemies.filter((enemy) => {
 				let isEnemyOnScreen = enemy.update(delta);
 				return isEnemyOnScreen;
 			});
-
 			this.projectiles = this.projectiles.filter((projectile) => {
 				let isProjectileOnScreen = projectile.update();
 				return isProjectileOnScreen;
 			});
-
-			for (let projectile of this.projectiles) {
-				projectile.checkForCollisions();
-			}
-
-			planet.tilePosition.x -= 3;
-			space.tilePosition.x -= 0.05;
-
-			this.player.update(delta);
 		}, this);
+	}
+
+	detectCollisions() {
+		for (let projectile of this.projectiles) {
+			for (let enemy of this.enemies) {
+				let areTheyColliding = Util.areTheyColliding(projectile, enemy);
+				if (areTheyColliding) {
+					projectile.sprite.alpha = 0.5;
+					console.log('COLLISION')
+				} else {
+					projectile.sprite.alpha = 1;
+				}
+			}
+		}
 	}
 
 	spawnEnemy() {

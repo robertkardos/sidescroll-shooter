@@ -17,8 +17,8 @@ export default class SplashscreenState extends State {
 		this.addChild(splashscreen);
 
 		this.ticker.add((delta) => {
-			if (this.runningSince + this.ticker.elapsedMS > 2000) {
-				splashscreen.alpha -= 0.01;
+			if (this.runningSince + this.ticker.elapsedMS > 100) {
+				splashscreen.alpha -= 0.1;
 				blurFilter.blur += 0.1;
 				if (splashscreen.alpha <= 0) {
 					Game.switchToState('main');
