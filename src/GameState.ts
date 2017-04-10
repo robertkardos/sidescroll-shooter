@@ -67,6 +67,13 @@ export default class GameState extends State {
 					return isEnemyOnScreen;
 				});
 
+			this.enemies.forEach((enemy) => {
+					let isPlayerColliding = Util.areTheyColliding(this.player, enemy);
+					if (isPlayerColliding) {
+						console.log('DIEDED');
+					}
+				});
+
 			this.projectiles = this.projectiles
 				.filter((projectile) => {
 					let isProjectileOnScreen = projectile.update();
