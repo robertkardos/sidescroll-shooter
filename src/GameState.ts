@@ -3,12 +3,12 @@ import * as PIXI from 'pixi.js';
 import Enemy from './Enemy';
 import Explosion from './Explosion';
 import Game from './Game';
+import GameObject from './GameObject';
 import Particle from './Particle';
 import Player from './Player';
 import Rocket from './Rocket';
 import Ship from './Ship';
 import State from './State';
-import Util from './Util';
 
 export default class GameState extends State {
 	private player: Player;
@@ -96,7 +96,7 @@ export default class GameState extends State {
 	private detectCollisions() {
 		this.enemies.forEach((enemy) => {
 			if (enemy.status === 'live' && this.player.status === 'live') {
-				let isPlayerColliding = Util.areTheyColliding(this.player, enemy);
+				let isPlayerColliding = GameObject.areTheyColliding(this.player, enemy);
 				if (isPlayerColliding) {
 					enemy.explode();
 					this.player.explode();
@@ -105,7 +105,7 @@ export default class GameState extends State {
 
 			if (enemy.status === 'live') {
 				for (let projectile of this.projectiles) {
-					if (Util.areTheyColliding(projectile, enemy)) {
+					if (GameObject.areTheyColliding(projectile, enemy)) {
 						projectile.container.alpha = 0.5;
 
 						enemy.explode();
