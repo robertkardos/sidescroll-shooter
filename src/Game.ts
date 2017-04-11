@@ -19,8 +19,6 @@ export default class Game {
 		Game.bindControls();
 
 		Game.addState(StateFactory.create('splashscreen'));
-		// Game.addState(StateFactory.create('main'));
-		// Game.addState(StateFactory.create('game'));
 	}
 
 	public static addState(newState: State) {
