@@ -18,17 +18,18 @@ export default class Enemy extends Ship {
 		this.movementOnX = -(Math.random() * 7 + 1);
 
 		this.velocity = new PIXI.Point(0, 0);
-		this.collided = false;
 	}
 
 	public update(delta: number) {
-		let isAlive = super.update(delta);
-		if (!isAlive || this.container.x < 0 - this.sprite.width) {
-			return false;
-		}
-		this.velocity.y = this.movementAmplitude * Math.sin(this.container.x / this.movementPeriod);
-		this.velocity.x = this.movementOnX;
+		super.update(delta);
 
-		return true;
+		if (this.container.x < 0 - this.sprite.width && this.status !== 'exploding') {
+			this.status = 'left';
+		}
+
+		if (this.status === 'live') {
+			this.velocity.x = this.movementOnX;
+			this.velocity.y = this.movementAmplitude * Math.sin(this.container.x / this.movementPeriod);
+		}
 	}
 }

@@ -42,11 +42,9 @@ export default class Explosion extends PIXI.Container {
 		}
 
 		this.alpha -= 0.01;
-		if (this.alpha === 0) {
-			this.destroy();
+		if (this.alpha <= 0) {
+			// this.destroy();
 			console.log('DESTROYED E')
-			return false;
 		}
-		return true;
 	}
 }

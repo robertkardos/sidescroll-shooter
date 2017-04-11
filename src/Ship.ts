@@ -8,43 +8,61 @@ import Rocket from './Rocket';
 export default class Ship implements GameObject {
 	public container: PIXI.Container;
 	public velocity: PIXI.Point;
+	public fallingVelocity: PIXI.Point;
 
 	private texture: PIXI.Texture;
 	public sprite: PIXI.Sprite;
+	public status: string;
 
-	public collided: boolean;
-	public exploded: boolean;
 	public explosion: Explosion;
 	public explosionTimer: number;
 
 	constructor(imageSrc: string) {
 		this.container = new PIXI.Container();
+		this.status = 'live';
 
 		this.texture = PIXI.Texture.fromImage(imageSrc);
 		this.sprite = new PIXI.Sprite(this.texture);
 		this.container.addChild(this.sprite);
 
-		this.exploded = false;
+		this.fallingVelocity = new PIXI.Point(0);
 		this.explosionTimer = 0;
 	}
 
 	public update(delta: number) {
-		if (this.collided) {
-			let isStillExploding = this.explosion.update(delta);
-			if (isStillExploding) {
-				console.log('destroyed')
-				this.container.destroy();
-				return false;
+		if (this.status === 'exploding') {
+			this.explodeAnimation(delta);
+			if (this.explosion.alpha <= 0) {
+				this.status = 'exploded';
+			} else {
+				this.explosion.update(delta);
 			}
 		}
-		this.container.x += this.velocity.x;
-		this.container.y += this.velocity.y;
-		return true;
+		this.move();
+	}
+
+	private move() {
+		if (this.status !== 'exploding') {
+			this.container.x += this.velocity.x;
+			this.container.y += this.velocity.y;
+		} else {
+			this.container.x += this.fallingVelocity.x;
+			this.container.y += this.fallingVelocity.y;
+		}
 	}
 
 	public explode() {
-		this.collided = true;
-		this.explosion = new Explosion(new PIXI.Point(this.container.x, this.container.y), 200);
+		this.status = 'exploding';
+		this.fallingVelocity.set(this.velocity.x, this.velocity.y);
+		this.explosion = new Explosion(new PIXI.Point(0, 0), 200);
 		this.container.addChild(this.explosion);
+		this.sprite.anchor.set(0.3, 0.5);
+	}
+
+	public explodeAnimation(delta: number) {
+		this.sprite.rotation += 0.1;
+		this.fallingVelocity.x = 0.98 * this.fallingVelocity.x;
+		this.fallingVelocity.y = 0.98 * this.fallingVelocity.y;
+		this.sprite.scale.set(this.explosion.alpha);
 	}
 }

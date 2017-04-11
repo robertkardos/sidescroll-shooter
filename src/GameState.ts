@@ -50,51 +50,52 @@ export default class GameState extends State {
 		this.addGameObject(this.player);
 
 		this.ticker.add((delta: number) => {
-			this.enemySpawnTimer += delta;
-			if (this.enemySpawnTimer > 120) {
-				this.spawnEnemy();
-			}
-
-			this.detectCollisions();
 			this.scrollBackground();
+			this.tryToSpawnEnemy(delta);
+			this.checkForPlayerMove();
+			this.detectCollisions();
+			this.cleanUp(delta);
+			this.update(delta);
 
-			this.move();
-
-			if (this.player && !this.player.update(delta)) {
+			if (this.player.status === 'exploded') {
 				delete this.player;
 				alert('getrekt');
 				Game.switchToState('main');
 				return;
 			}
-
-			this.explosions = this.explosions
-				.filter((explosion) => {
-					let isExplosionOnScreen = explosion.update(delta);
-					return isExplosionOnScreen;
-				});
-
-			this.enemies = this.enemies
-				.filter((enemy) => {
-					let isEnemyOnScreen = enemy.update(delta);
-					return isEnemyOnScreen;
-				});
-
-			this.projectiles = this.projectiles
-				.filter((projectile) => {
-					let isProjectileOnScreen = projectile.update();
-					return isProjectileOnScreen;
-				});
 		}, this);
 	}
 
-	scrollBackground() {
+	private scrollBackground() {
 		this.planet.tilePosition.x -= 3;
 		this.space.tilePosition.x -= 0.05;
 	}
 
-	detectCollisions() {
+	private update(delta: number) {
+		this.enemies.forEach((enemy) => enemy.update(delta));
+		this.projectiles.forEach((projectile) => projectile.update(delta));
+		this.player.update(delta);
+	}
+
+	private cleanUp(delta: number) {
+		this.enemies
+			.filter(enemy => enemy.status === 'left' || enemy.status === 'exploded')
+			.forEach(enemy => this.container.removeChild(enemy.container));
+
+		this.enemies = this.enemies
+			.filter((enemy) => enemy.status === 'live' || enemy.status === 'exploding');
+
+		this.projectiles
+			.filter(projectile => projectile.status === 'left' || projectile.status === 'exploded')
+			.forEach(projectile => this.container.removeChild(projectile.container));
+
+		this.projectiles = this.projectiles
+			.filter((projectile) => projectile.status === 'live');
+	}
+
+	private detectCollisions() {
 		this.enemies.forEach((enemy) => {
-			if (!enemy.collided && !this.player.collided) {
+			if (enemy.status === 'live' && this.player.status === 'live') {
 				let isPlayerColliding = Util.areTheyColliding(this.player, enemy);
 				if (isPlayerColliding) {
 					enemy.explode();
@@ -102,26 +103,29 @@ export default class GameState extends State {
 				}
 			}
 
-			for (let projectile of this.projectiles) {
-				let areTheyColliding = Util.areTheyColliding(projectile, enemy);
-				if (areTheyColliding) {
-					projectile.container.alpha = 0.5;
+			if (enemy.status === 'live') {
+				for (let projectile of this.projectiles) {
+					if (Util.areTheyColliding(projectile, enemy)) {
+						projectile.container.alpha = 0.5;
 
-					let explosion = new Explosion(projectile.container.position, 50, enemy.velocity);
-					this.explosions.push(explosion);
-					this.container.addChild(explosion);
-
-					enemy.explode();
-					projectile.collided = true;
-				} else {
-					projectile.container.alpha = 1;
+						enemy.explode();
+						projectile.status = 'exploded';
+					} else {
+						projectile.container.alpha = 1;
+					}
 				}
 			}
 		});
-
 	}
 
-	spawnEnemy() {
+	private tryToSpawnEnemy(delta: number) {
+		this.enemySpawnTimer += delta;
+		if (this.enemySpawnTimer > 120) {
+			this.spawnEnemy();
+		}
+	}
+
+	private spawnEnemy() {
 		let enemy = new Enemy();
 		this.enemySpawnTimer = 0;
 		this.enemies.push(enemy);
@@ -136,7 +140,7 @@ export default class GameState extends State {
 		this.pressedKeys[event.keyCode] = true;
 	}
 
-	move() {
+	private checkForPlayerMove() {
 		this.player.velocity.set(0);
 
 		if (this.pressedKeys[32]) {

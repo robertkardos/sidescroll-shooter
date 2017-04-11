@@ -5,16 +5,18 @@ import Game from './Game';
 import GameObject from './GameObject';
 
 export default class Rocket implements GameObject {
-	public velocity: PIXI.Point;
-	private texture: PIXI.Texture;
 	public container: PIXI.Container;
+	public velocity: PIXI.Point;
+	public status: string;
+
+	private texture: PIXI.Texture;
 	public sprite: PIXI.Sprite;
-	public collided: boolean;
 
 	constructor(position: PIXI.Point) {
 		this.container = new PIXI.Container();
 		this.velocity = new PIXI.Point(10);
-		this.collided = false;
+		this.status = 'live';
+
 		this.texture = PIXI.Texture.fromImage('assets/rocket.png');
 		this.sprite = new PIXI.Sprite(this.texture);
 		position.y = position.y - this.sprite.height / 2;
@@ -23,16 +25,10 @@ export default class Rocket implements GameObject {
 		this.container.addChild(this.sprite);
 	}
 
-	public update() {
+	public update(delta: number) {
 		this.container.position.x += this.velocity.x;
-		if (this.container.position.x > 800 || this.collided) {
-			this.container.destroy();
-			return false;
+		if (this.container.position.x > 800) {
+			this.status = 'left';
 		}
-		return true;
-	}
-
-	public isCollidingWith(enemy: Enemy) {
-
 	}
 }
