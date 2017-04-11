@@ -56,7 +56,7 @@ export default class Ship implements GameObject {
 		this.fallingVelocity.set(this.velocity.x, this.velocity.y);
 		this.explosion = new Explosion(new PIXI.Point(0, 0), 200);
 		this.container.addChild(this.explosion);
-		this.sprite.anchor.set(0.3, 0.5);
+		this.sprite.anchor.set(0.2, 0.2);
 	}
 
 	public explodeAnimation(delta: number) {

@@ -1,32 +1,31 @@
 import * as PIXI from 'pixi.js';
 
-export default class Ship extends PIXI.Graphics {
+export default class Particle extends PIXI.Graphics {
 	public velocity: PIXI.Point;
 	private graphics: PIXI.Graphics;
 
 	constructor(
-		// position: PIXI.Point,
 		velocity: PIXI.Point = new PIXI.Point(0)
 	) {
 		super();
+		let direction = Math.random() * 2 * Math.PI;
+		let velocityScale = Math.random();
+		let size = Math.round(Math.random() * 5) + 3;
+		let colors = [
+			0xffffff,
+			0xfffe00,
+			0xff8206,
+			0xfb0000,
+			0xa70103
+		];
 
-		this.lineStyle(2, +0xff381f, 1);
-		this.beginFill(0xFFf99B, 1);
-		this.drawRect(
-			// position.x + 20,
-			// position.y + 20,
-			0,
-			0,
-			8,
-			8
-		);
-
-		let xRandomRange = (Math.random() - 0.5) * 5 + velocity.x / 2;
-		let yRandomRange = (Math.random() - 0.5) * 2 + velocity.y / 2;
+		let colorBasedOnVelocity = colors[Math.floor(velocityScale / 0.2)];
+		this.beginFill(colorBasedOnVelocity, 1);
+		this.drawRect(0, 0, size, size);
 
 		this.velocity = new PIXI.Point(
-			xRandomRange,
-			yRandomRange
+			Math.cos(direction) * velocityScale,
+			Math.sin(direction) * velocityScale
 		);
 	}
 
