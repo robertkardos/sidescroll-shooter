@@ -2,7 +2,6 @@ import * as PIXI from 'pixi.js';
 
 export default class Particle extends PIXI.Graphics {
 	public velocity: PIXI.Point;
-	private graphics: PIXI.Graphics;
 
 	constructor(
 		velocity: PIXI.Point = new PIXI.Point(0)
@@ -10,7 +9,8 @@ export default class Particle extends PIXI.Graphics {
 		super();
 		let direction = Math.random() * 2 * Math.PI;
 		let velocityScale = Math.random();
-		let size = Math.round(Math.random() * 5) + 3;
+		let size = 5;
+		// let size = Math.round(Math.random() * 5) + 3;
 		let colors = [
 			0xffffff,
 			0xfffe00,
@@ -20,6 +20,7 @@ export default class Particle extends PIXI.Graphics {
 		];
 
 		let colorBasedOnVelocity = colors[Math.floor(velocityScale / 0.2)];
+		this.lineStyle(1, 0x000000, 1);
 		this.beginFill(colorBasedOnVelocity, 1);
 		this.drawRect(0, 0, size, size);
 

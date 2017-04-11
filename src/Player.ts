@@ -24,7 +24,7 @@ export default class Player extends Ship {
 	public shoot() {
 		this.cooldown = 20;
 
-		let rocketPosition: PIXI.Point = new PIXI.Point(
+		let rocketPosition = new PIXI.Point(
 			this.container.x + this.sprite.width - 10,
 			this.container.y + this.sprite.height / 2,
 		);

@@ -2,7 +2,6 @@ import * as PIXI from 'pixi.js';
 
 export default class Button extends PIXI.Container {
 	public text: string;
-	public container: PIXI.Container;
 
 	constructor(text: string, onClick: (gameSession?: number) => void) {
 		super();

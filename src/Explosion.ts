@@ -4,21 +4,17 @@ import Particle from './Particle';
 
 export default class Explosion extends PIXI.Container {
 	public velocity: PIXI.Point;
-	private graphics: PIXI.Graphics;
 	private particles: Array<Particle>;
 
 	constructor(
 		position: PIXI.Point,
-		amount: number = 100,
+		amount: number = 50,
 		velocity: PIXI.Point = new PIXI.Point(0)
 	) {
 		super();
 
 		this.particles = [];
-		this.x = position.x;
-		this.y = position.y;
-		// let xRandomRange = velocity.x / 2;
-		// let yRandomRange = velocity.y / 2;
+		this.position = position;
 
 		for (let i = 0; i < amount; i++) {
 			let particle = new Particle();
@@ -42,9 +38,5 @@ export default class Explosion extends PIXI.Container {
 		}
 
 		this.alpha -= 0.01;
-		if (this.alpha <= 0) {
-			// this.destroy();
-			console.log('DESTROYED E')
-		}
 	}
 }

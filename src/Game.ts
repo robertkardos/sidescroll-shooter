@@ -5,7 +5,6 @@ import StateFactory from './StateFactory';
 
 export default class Game {
 	private static states: any;
-	private static buttons: any;
 	public static currentStateName: string;
 	public static app: PIXI.Application;
 
@@ -13,7 +12,6 @@ export default class Game {
 
 	public static create() {
 		Game.states = {};
-		Game.buttons = {};
 		Game.app = new PIXI.Application(800, 600, {backgroundColor : 0x000000});
 		document.body.appendChild(Game.app.view);
 		Game.bindControls();
