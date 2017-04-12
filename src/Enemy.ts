@@ -13,8 +13,8 @@ export default class Enemy extends Ship {
 		this.container.x = 800;
 		this.container.y = Math.random() * (600 - this.sprite.height);
 
-		this.movementAmplitude = Math.random() * 5 + 2;
-		this.movementPeriod = Math.random() * 130 + 50;
+		this.movementAmplitude = Math.random() * 4 + 2;
+		this.movementPeriod = Math.random() * 100 + 50;
 		this.movementOnX = -(Math.random() * 7 + 1);
 
 		this.velocity = new PIXI.Point(0, 0);
@@ -23,11 +23,11 @@ export default class Enemy extends Ship {
 	public update(delta: number) {
 		super.update(delta);
 
-		if (this.container.x < 0 - this.sprite.width && this.status !== 'exploding') {
-			this.status = 'left';
+		if (this.container.x < 0 - this.sprite.width && this.state !== 'exploding') {
+			this.state = 'left';
 		}
 
-		if (this.status === 'live') {
+		if (this.state === 'live') {
 			this.velocity.x = this.movementOnX;
 			this.velocity.y = this.movementAmplitude * Math.sin(this.container.x / this.movementPeriod);
 		}

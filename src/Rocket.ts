@@ -2,33 +2,25 @@ import * as PIXI from 'pixi.js';
 
 import Enemy from './Enemy';
 import Game from './Game';
-import GameObject from './GameObject';
+import MovingGameObject from './MovingGameObject';
 
-export default class Rocket implements GameObject {
-	public container: PIXI.Container;
-	public velocity: PIXI.Point;
-	public status: string;
-
-	private texture: PIXI.Texture;
-	public sprite: PIXI.Sprite;
-
+export default class Rocket extends MovingGameObject {
 	constructor(position: PIXI.Point) {
-		this.container = new PIXI.Container();
-		this.velocity = new PIXI.Point(10);
-		this.status = 'live';
+		super('assets/rocket.png');
 
-		this.texture = PIXI.Texture.fromImage('assets/rocket.png');
-		this.sprite = new PIXI.Sprite(this.texture);
+		this.velocity = new PIXI.Point(10, 0);
 		position.y = position.y - this.sprite.height / 2;
 		this.container.position = position;
-
-		this.container.addChild(this.sprite);
 	}
 
 	public update(delta: number) {
-		this.container.position.x += this.velocity.x;
+		super.update(delta);
 		if (this.container.position.x > 800) {
-			this.status = 'left';
+			this.state = 'left';
 		}
+	}
+
+	protected move() {
+		this.container.position.x += this.velocity.x;
 	}
 }

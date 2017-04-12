@@ -57,7 +57,7 @@ export default class GameState extends State {
 			this.cleanUp(delta);
 			this.update(delta);
 
-			if (this.player.status === 'exploded') {
+			if (this.player.state === 'exploded') {
 				delete this.player;
 				alert('getrekt');
 				Game.switchToState('main');
@@ -79,23 +79,23 @@ export default class GameState extends State {
 
 	private cleanUp(delta: number) {
 		this.enemies
-			.filter(enemy => enemy.status === 'left' || enemy.status === 'exploded')
+			.filter(enemy => enemy.state === 'left' || enemy.state === 'exploded')
 			.forEach(enemy => this.container.removeChild(enemy.container));
 
 		this.enemies = this.enemies
-			.filter((enemy) => enemy.status === 'live' || enemy.status === 'exploding');
+			.filter((enemy) => enemy.state === 'live' || enemy.state === 'exploding');
 
 		this.projectiles
-			.filter(projectile => projectile.status === 'left' || projectile.status === 'exploded')
+			.filter(projectile => projectile.state === 'left' || projectile.state === 'exploded')
 			.forEach(projectile => this.container.removeChild(projectile.container));
 
 		this.projectiles = this.projectiles
-			.filter((projectile) => projectile.status === 'live');
+			.filter((projectile) => projectile.state === 'live');
 	}
 
 	private detectCollisions() {
 		this.enemies.forEach((enemy) => {
-			if (enemy.status === 'live' && this.player.status === 'live') {
+			if (enemy.state === 'live' && this.player.state === 'live') {
 				let isPlayerColliding = GameObject.areTheyColliding(this.player, enemy);
 				if (isPlayerColliding) {
 					enemy.explode();
@@ -103,13 +103,13 @@ export default class GameState extends State {
 				}
 			}
 
-			if (enemy.status === 'live') {
+			if (enemy.state === 'live') {
 				for (let projectile of this.projectiles) {
 					if (GameObject.areTheyColliding(projectile, enemy)) {
 						projectile.container.alpha = 0.5;
 
 						enemy.explode();
-						projectile.status = 'exploded';
+						projectile.state = 'exploded';
 					} else {
 						projectile.container.alpha = 1;
 					}
@@ -141,7 +141,7 @@ export default class GameState extends State {
 	}
 
 	private checkForPlayerMove() {
-		this.player.velocity.set(0);
+		// this.player.velocity.set(0);
 
 		if (this.pressedKeys[32]) {
 			if (!this.player.onCooldown()) {
@@ -152,16 +152,16 @@ export default class GameState extends State {
 		}
 
 		if (this.pressedKeys[87]) {
-			this.player.velocity.y = -3;
+			this.player.go('up');
 		}
 		if (this.pressedKeys[68]) {
-			this.player.velocity.x = 3;
+			this.player.go('right');
 		}
 		if (this.pressedKeys[83]) {
-			this.player.velocity.y = 3;
+			this.player.go('down');
 		}
 		if (this.pressedKeys[65]) {
-			this.player.velocity.x = -3;
+			this.player.go('left');
 		}
 	};
 }

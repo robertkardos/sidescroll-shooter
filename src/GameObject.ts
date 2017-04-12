@@ -2,11 +2,20 @@ import * as PIXI from 'pixi.js';
 
 abstract class GameObject {
 	public container: PIXI.Container;
-	public velocity: PIXI.Point;
-	public status: string;
+	protected texture: PIXI.Texture;
 	public sprite: PIXI.Sprite
+	public state: string;
 
-	abstract update: (delta: number) => void;
+	constructor(imageSrc: string) {
+		this.container = new PIXI.Container();
+		this.texture = PIXI.Texture.fromImage(imageSrc);
+		this.sprite = new PIXI.Sprite(this.texture);
+		this.state = 'live';
+
+		this.container.addChild(this.sprite);
+	}
+
+	public abstract update(delta: number): void;
 
 	public static areTheyColliding(object1: GameObject, object2: GameObject): boolean {
 
