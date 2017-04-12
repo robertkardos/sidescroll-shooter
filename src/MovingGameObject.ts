@@ -7,6 +7,7 @@ abstract class MovingGameObject extends GameObject {
 
 	constructor(imageSrc: string) {
 		super(imageSrc);
+		this.velocity = new PIXI.Point(0);
 	}
 
 	public update(delta: number) {

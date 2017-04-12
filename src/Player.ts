@@ -8,18 +8,19 @@ import Ship from './Ship';
 export default class Player extends Ship {
 	private cooldown: number;
 	private directions: {};
+	private acceleration: number;
 
 	constructor() {
 		super('assets/kestrel.png');
 		this.container.position.set(30, 300 - this.sprite.height / 2);
-		this.velocity = new PIXI.Point(0);
 		this.cooldown = 0;
 
+		this.acceleration = 0.3;
 		this.directions = {
-			up: new PIXI.Point(0, -0.3),
-			right: new PIXI.Point(0.3, 0),
-			down: new PIXI.Point(0, 0.3),
-			left: new PIXI.Point(-0.3)
+			up: new PIXI.Point(0, -1),
+			right: new PIXI.Point(1, 0),
+			down: new PIXI.Point(0, 1),
+			left: new PIXI.Point(-1)
 		};
 	}
 
@@ -48,8 +49,8 @@ export default class Player extends Ship {
 
 	public go(direction: string) {
 		if (this.state !== 'exploding') {
-			this.velocity.x += this.directions[direction].x;
-			this.velocity.y += this.directions[direction].y;
+			this.velocity.x += this.directions[direction].x * this.acceleration;
+			this.velocity.y += this.directions[direction].y * this.acceleration;
 		}
 	}
 
