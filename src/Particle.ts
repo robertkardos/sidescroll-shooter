@@ -1,5 +1,7 @@
 import * as PIXI from 'pixi.js';
 
+import Vector from './util/Vector';
+
 export default class Particle extends PIXI.Graphics {
 	public velocity: PIXI.Point;
 
@@ -27,11 +29,24 @@ export default class Particle extends PIXI.Graphics {
 			Math.cos(direction) * velocityScale,
 			Math.sin(direction) * velocityScale
 		);
+
+
+		this.velocity = Vector.scale(
+			new PIXI.Point(),
+			new PIXI.Point(
+				Math.cos(direction),
+				Math.sin(direction)
+			),
+			velocityScale
+		);
 	}
 
 	public update(delta: number) {
-		this.position.x += this.velocity.x;
-		this.position.y += this.velocity.y;
+		this.position = Vector.add(
+			new PIXI.Point(),
+			this.position,
+			this.velocity
+		);
 
 		this.alpha -= 0.01;
 		if (this.alpha === 0) {

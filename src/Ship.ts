@@ -8,11 +8,10 @@ import Rocket from './Rocket';
 import ShipLiveState from './ShipLiveState';
 import ShipExplodingState from './ShipExplodingState';
 import ShipState from './ShipState';
+import Vector from './util/Vector';
 
 export default class Ship extends MovingGameObject {
-	public fallingVelocity: PIXI.Point;
 	public explosion: Explosion;
-	public explosionTimer: number;
 	public shipState: ShipState;
 	protected directions: {};
 	protected acceleration: PIXI.Point;
@@ -21,9 +20,6 @@ export default class Ship extends MovingGameObject {
 	constructor(imageSrc: string) {
 		super(imageSrc);
 		this.shipState = new ShipLiveState();
-
-		this.fallingVelocity = new PIXI.Point(0);
-		this.explosionTimer = 0;
 
 		this.directions = {
 			up: new PIXI.Point(0, -1),
@@ -39,8 +35,11 @@ export default class Ship extends MovingGameObject {
 	}
 
 	public loseMomentum() {
-		this.velocity.x = this.velocity.x * this.rateOfLosingMomentum;
-		this.velocity.y = this.velocity.y * this.rateOfLosingMomentum;
+		this.velocity = Vector.scale(
+			new PIXI.Point(),
+			this.velocity,
+			this.rateOfLosingMomentum
+		);
 	}
 
 	public go(direction: string) {
@@ -58,8 +57,9 @@ export default class Ship extends MovingGameObject {
 			this.isDisposable = true;
 		}
 		this.sprite.rotation += 0.05;
-		this.velocity.x = 0.97 * this.velocity.x;
-		this.velocity.y = 0.97 * this.velocity.y;
-		this.sprite.scale.set(this.explosion.alpha);
+
+		this.velocity = Vector.scale(new PIXI.Point(), this.velocity, 0.97);
+		this.sprite.scale = Vector.scale(new PIXI.Point(), this.sprite.scale, 0.98);
+		this.sprite.alpha = this.explosion.alpha;
 	}
 }

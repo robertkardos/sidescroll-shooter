@@ -19,8 +19,4 @@ export default class Rocket extends MovingGameObject {
 			this.isDisposable = true;
 		}
 	}
-
-	move() {
-		this.container.position.x += this.velocity.x;
-	}
 }
