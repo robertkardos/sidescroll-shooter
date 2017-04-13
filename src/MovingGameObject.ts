@@ -14,7 +14,7 @@ abstract class MovingGameObject extends GameObject {
 		this.move();
 	};
 
-	protected move(): void {
+	move(): void {
 		this.container.position.x += this.velocity.x;
 		this.container.position.y += this.velocity.y;
 	}

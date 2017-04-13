@@ -8,7 +8,7 @@ export default class Explosion extends PIXI.Container {
 
 	constructor(
 		position: PIXI.Point,
-		amount: number = 50,
+		amount: number = 100,
 		velocity: PIXI.Point = new PIXI.Point(0)
 	) {
 		super();

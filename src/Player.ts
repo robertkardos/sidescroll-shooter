@@ -5,30 +5,25 @@ import Game from './Game';
 import Rocket from './Rocket';
 import Ship from './Ship';
 
+import ShipState from './ShipState';
+import ShipLiveState from './ShipLiveState';
+
 export default class Player extends Ship {
 	private cooldown: number;
-	private directions: {};
-	private acceleration: number;
 
 	constructor() {
 		super('assets/kestrel.png');
 		this.container.position.set(30, 300 - this.sprite.height / 2);
 		this.cooldown = 0;
 
-		this.acceleration = 0.3;
-		this.directions = {
-			up: new PIXI.Point(0, -1),
-			right: new PIXI.Point(1, 0),
-			down: new PIXI.Point(0, 1),
-			left: new PIXI.Point(-1)
-		};
+		this.acceleration = new PIXI.Point(0.4, 0.4);
+		this.rateOfLosingMomentum = 0.94;
 	}
 
 	public update(delta: number) {
 		super.update(delta);
 		this.decreaseCooldownBy(delta);
 		this.stayOnScreen();
-		this.loseMomentum();
 	}
 
 	public shoot() {
@@ -40,18 +35,6 @@ export default class Player extends Ship {
 		);
 		let rocket = new Rocket(rocketPosition);
 		return rocket;
-	}
-
-	private loseMomentum() {
-		this.velocity.x = this.velocity.x * 0.95;
-		this.velocity.y = this.velocity.y * 0.95;
-	}
-
-	public go(direction: string) {
-		if (this.state !== 'exploding') {
-			this.velocity.x += this.directions[direction].x * this.acceleration;
-			this.velocity.y += this.directions[direction].y * this.acceleration;
-		}
 	}
 
 	public stayOnScreen() {

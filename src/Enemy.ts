@@ -6,30 +6,35 @@ import Ship from './Ship';
 export default class Enemy extends Ship {
 	public movementAmplitude: number;
 	public movementPeriod: number;
-	public movementOnX: number;
+	public accelerationOnX: number;
+	public accelerationOnY: number;
 
 	constructor() {
 		super('assets/torus.png');
 		this.container.x = 800;
 		this.container.y = Math.random() * (600 - this.sprite.height);
 
-		this.movementAmplitude = Math.random() * 4 + 2;
-		this.movementPeriod = Math.random() * 100 + 50;
-		this.movementOnX = -(Math.random() * 7 + 1);
+		this.movementPeriod = Math.random() * 50 + 30;
+		this.accelerationOnX = Math.random() * 0.4;
+		this.accelerationOnY =  0.2;
+		this.acceleration = new PIXI.Point(this.accelerationOnX, this.accelerationOnY);
 
-		this.velocity = new PIXI.Point(0, 0);
+		this.rateOfLosingMomentum = 0.95;
 	}
 
 	public update(delta: number) {
 		super.update(delta);
-
-		if (this.container.x < 0 - this.sprite.width && this.state !== 'exploding') {
-			this.state = 'left';
+		if (this.container.x < 0 - this.sprite.width) {
+			this.isDisposable = true;
 		}
 
-		if (this.state === 'live') {
-			this.velocity.x = this.movementOnX;
-			this.velocity.y = this.movementAmplitude * Math.sin(this.container.x / this.movementPeriod);
+		this.go('left')
+		let asd = Math.cos(this.container.x / this.movementPeriod);
+
+		if (asd > 0) {
+			this.go('up');
+		} else {
+			this.go('down');
 		}
 	}
 }

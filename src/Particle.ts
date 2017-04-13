@@ -9,8 +9,7 @@ export default class Particle extends PIXI.Graphics {
 		super();
 		let direction = Math.random() * 2 * Math.PI;
 		let velocityScale = Math.random();
-		let size = 5;
-		// let size = Math.round(Math.random() * 5) + 3;
+		let size = Math.round(Math.random() * 10) + 3;
 		let colors = [
 			0xffffff,
 			0xfffe00,

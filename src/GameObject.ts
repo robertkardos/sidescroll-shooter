@@ -4,13 +4,15 @@ abstract class GameObject {
 	public container: PIXI.Container;
 	protected texture: PIXI.Texture;
 	public sprite: PIXI.Sprite
-	public state: string;
+	public isDisposable: boolean;
+	public isCollidable: boolean;
 
 	constructor(imageSrc: string) {
 		this.container = new PIXI.Container();
 		this.texture = PIXI.Texture.fromImage(imageSrc);
 		this.sprite = new PIXI.Sprite(this.texture);
-		this.state = 'live';
+		this.isDisposable = false;
+		this.isCollidable = true;
 
 		this.container.addChild(this.sprite);
 	}

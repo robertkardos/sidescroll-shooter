@@ -16,11 +16,11 @@ export default class Rocket extends MovingGameObject {
 	public update(delta: number) {
 		super.update(delta);
 		if (this.container.position.x > 800) {
-			this.state = 'left';
+			this.isDisposable = true;
 		}
 	}
 
-	protected move() {
+	move() {
 		this.container.position.x += this.velocity.x;
 	}
 }

@@ -14,7 +14,6 @@ export default class GameState extends State {
 	private player: Player;
 	private enemies: Array<Enemy>;
 	private projectiles: Array<Rocket>;
-	private explosions: Array<Explosion>;
 	private space: PIXI.extras.TilingSprite;
 	private planet: PIXI.extras.TilingSprite;
 
@@ -26,7 +25,6 @@ export default class GameState extends State {
 
 		this.enemies = [];
 		this.projectiles = [];
-		this.explosions = [];
 
 		this.pressedKeys = [];
 
@@ -57,7 +55,7 @@ export default class GameState extends State {
 			this.cleanUp(delta);
 			this.update(delta);
 
-			if (this.player.state === 'exploded') {
+			if (this.player.isDisposable) {
 				delete this.player;
 				alert('getrekt');
 				Game.switchToState('main');
@@ -79,23 +77,23 @@ export default class GameState extends State {
 
 	private cleanUp(delta: number) {
 		this.enemies
-			.filter(enemy => enemy.state === 'left' || enemy.state === 'exploded')
+			.filter(enemy => enemy.isDisposable)
 			.forEach(enemy => this.container.removeChild(enemy.container));
 
 		this.enemies = this.enemies
-			.filter((enemy) => enemy.state === 'live' || enemy.state === 'exploding');
+			.filter((enemy) => !enemy.isDisposable);
 
 		this.projectiles
-			.filter(projectile => projectile.state === 'left' || projectile.state === 'exploded')
+			.filter(projectile => projectile.isDisposable)
 			.forEach(projectile => this.container.removeChild(projectile.container));
 
 		this.projectiles = this.projectiles
-			.filter((projectile) => projectile.state === 'live');
+			.filter((projectile) => !projectile.isDisposable);
 	}
 
 	private detectCollisions() {
 		this.enemies.forEach((enemy) => {
-			if (enemy.state === 'live' && this.player.state === 'live') {
+			if (enemy.isCollidable && this.player.isCollidable) {
 				let isPlayerColliding = GameObject.areTheyColliding(this.player, enemy);
 				if (isPlayerColliding) {
 					enemy.explode();
@@ -103,13 +101,13 @@ export default class GameState extends State {
 				}
 			}
 
-			if (enemy.state === 'live') {
+			if (enemy.isCollidable) {
 				for (let projectile of this.projectiles) {
 					if (GameObject.areTheyColliding(projectile, enemy)) {
 						projectile.container.alpha = 0.5;
 
 						enemy.explode();
-						projectile.state = 'exploded';
+						projectile.isDisposable = true;
 					} else {
 						projectile.container.alpha = 1;
 					}
