@@ -8,9 +8,9 @@ import Particle from './Particle';
 import Player from './Player';
 import Rocket from './Rocket';
 import Ship from './Ship';
-import State from './State';
+import Scene from './Scene';
 
-export default class GameState extends State {
+export default class GameScene extends Scene {
 	private player: Player;
 	private enemies: Array<Enemy>;
 	private projectiles: Array<Rocket>;
@@ -58,7 +58,7 @@ export default class GameState extends State {
 			if (this.player.isDisposable) {
 				delete this.player;
 				alert('getrekt');
-				Game.switchToState('main');
+				Game.switchToScene('main');
 				return;
 			}
 		}, this);

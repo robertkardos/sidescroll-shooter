@@ -1,9 +1,9 @@
 import * as PIXI from 'pixi.js';
 
 import Game from './Game';
-import State from './State';
+import Scene from './Scene';
 
-export default class SplashscreenState extends State {
+export default class SplashscreenScene extends Scene {
 	constructor(name: string) {
 		super(name);
 
@@ -21,7 +21,7 @@ export default class SplashscreenState extends State {
 				splashscreen.alpha -= 0.01;
 				blurFilter.blur += 0.1;
 				if (splashscreen.alpha <= 0) {
-					Game.switchToState('main');
+					Game.switchToScene('main');
 				}
 			}
 
@@ -30,6 +30,6 @@ export default class SplashscreenState extends State {
 	}
 
 	public keyDownHandler(event: KeyboardEvent) {
-		Game.switchToState('main');
+		Game.switchToScene('main');
 	}
 }

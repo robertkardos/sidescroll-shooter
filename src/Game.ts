@@ -1,50 +1,50 @@
 import * as PIXI from 'pixi.js';
 
-import State from './State';
-import StateFactory from './StateFactory';
+import Scene from './Scene';
+import SceneFactory from './SceneFactory';
 
 export default class Game {
-	private static states: any;
-	public static currentStateName: string;
+	private static scenes: any;
+	public static currentSceneName: string;
 	public static app: PIXI.Application;
 
 	private constructor() {}
 
 	public static create() {
-		Game.states = {};
+		Game.scenes = {};
 		Game.app = new PIXI.Application(800, 600, {backgroundColor : 0x000000});
 		document.body.appendChild(Game.app.view);
 		Game.bindControls();
 
-		Game.addState(StateFactory.create('splashscreen'));
+		Game.addScene(SceneFactory.create('splashscreen'));
 	}
 
-	public static addState(newState: State) {
-		Game.states[newState.name] = newState;
-		Game.currentStateName = newState.name;
-		Game.states[newState.name].ticker.start();
-		Game.app.stage.addChild(Game.states[newState.name].container);
+	public static addScene(newScene: Scene) {
+		Game.scenes[newScene.name] = newScene;
+		Game.currentSceneName = newScene.name;
+		Game.scenes[newScene.name].ticker.start();
+		Game.app.stage.addChild(Game.scenes[newScene.name].container);
 	}
 
-	public static switchToState(stateName: string) {
-		Game.states[Game.currentStateName].ticker.stop();
-		Game.app.stage.removeChild(Game.states[Game.currentStateName].container);
-		delete Game.states[Game.currentStateName];
+	public static switchToScene(sceneName: string) {
+		Game.scenes[Game.currentSceneName].ticker.stop();
+		Game.app.stage.removeChild(Game.scenes[Game.currentSceneName].container);
+		delete Game.scenes[Game.currentSceneName];
 
-		Game.addState(StateFactory.create(stateName));
+		Game.addScene(SceneFactory.create(sceneName));
 	}
 
 	private static bindControls() {
 		let keyUpHandler = (event: any) => {
-			if (this.states[this.currentStateName].keyUpHandler) {
-				this.states[this.currentStateName].keyUpHandler(event);
+			if (this.scenes[this.currentSceneName].keyUpHandler) {
+				this.scenes[this.currentSceneName].keyUpHandler(event);
 				event.preventDefault();
 			}
 		};
 
 		let keyDownHandler = (event: any) => {
-			if (this.states[this.currentStateName].keyDownHandler) {
-				this.states[this.currentStateName].keyDownHandler(event);
+			if (this.scenes[this.currentSceneName].keyDownHandler) {
+				this.scenes[this.currentSceneName].keyDownHandler(event);
 				event.preventDefault();
 			}
 		};

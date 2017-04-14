@@ -3,7 +3,7 @@ import * as PIXI from 'pixi.js';
 import Game from './Game';
 import GameObject from './GameObject';
 
-export default class State {
+export default class Scene {
 	public name: string;
 	public container: PIXI.Container;
 	protected runningSince: number;

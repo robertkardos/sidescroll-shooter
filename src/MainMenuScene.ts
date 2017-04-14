@@ -2,9 +2,9 @@ import * as PIXI from 'pixi.js';
 
 import Button from './Button';
 import Game from './Game';
-import State from './State';
+import Scene from './Scene';
 
-export default class MainState extends State {
+export default class MainMenuScene extends Scene {
 	constructor(name: string) {
 		super(name);
 
@@ -45,7 +45,7 @@ export default class MainState extends State {
 	}
 
 	private onGameButtonClick(num: number) {
-		Game.switchToState('game');
+		Game.switchToScene('game');
 	}
 
 	private onExitClick() {
