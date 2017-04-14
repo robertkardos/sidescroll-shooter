@@ -25,7 +25,7 @@ export default class Enemy extends Ship {
 	public update(delta: number) {
 		super.update(delta);
 		if (this.container.x < 0 - this.sprite.width) {
-			this.isDisposable = true;
+			this.remove();
 		}
 
 		this.go('left')

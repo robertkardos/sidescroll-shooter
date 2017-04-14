@@ -16,7 +16,7 @@ export default class Rocket extends MovingGameObject {
 	public update(delta: number) {
 		super.update(delta);
 		if (this.container.position.x > 800) {
-			this.isDisposable = true;
+			this.remove();
 		}
 	}
 }

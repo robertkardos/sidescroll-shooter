@@ -19,6 +19,11 @@ abstract class GameObject {
 		this.container.addChild(this.sprite);
 	}
 
+	public remove() {
+		this.isDisposable = true;
+		this.container.parent.removeChild(this.container);
+	}
+
 	public abstract update(delta: number): void;
 
 	public static areTheyColliding(object1: GameObject, object2: GameObject): boolean {

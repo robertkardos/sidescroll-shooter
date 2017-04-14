@@ -54,7 +54,7 @@ export default class Ship extends MovingGameObject {
 	public explodeAnimation(delta: number) {
 		this.explosion.update(delta);
 		if (this.explosion.alpha <= 0) {
-			this.isDisposable = true;
+			this.remove();
 		}
 		this.sprite.rotation += 0.05;
 

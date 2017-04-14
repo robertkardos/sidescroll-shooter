@@ -76,19 +76,8 @@ export default class GameState extends State {
 	}
 
 	private cleanUp(delta: number) {
-		this.enemies
-			.filter(enemy => enemy.isDisposable)
-			.forEach(enemy => this.container.removeChild(enemy.container));
-
-		this.enemies = this.enemies
-			.filter((enemy) => !enemy.isDisposable);
-
-		this.projectiles
-			.filter(projectile => projectile.isDisposable)
-			.forEach(projectile => this.container.removeChild(projectile.container));
-
-		this.projectiles = this.projectiles
-			.filter((projectile) => !projectile.isDisposable);
+		this.enemies = this.enemies.filter((enemy) => !enemy.isDisposable);
+		this.projectiles = this.projectiles.filter((projectile) => !projectile.isDisposable);
 	}
 
 	private detectCollisions() {
@@ -104,12 +93,8 @@ export default class GameState extends State {
 			if (enemy.isCollidable) {
 				for (let projectile of this.projectiles) {
 					if (GameObject.areTheyColliding(projectile, enemy)) {
-						projectile.container.alpha = 0.5;
-
 						enemy.explode();
-						projectile.isDisposable = true;
-					} else {
-						projectile.container.alpha = 1;
+						projectile.remove();
 					}
 				}
 			}
@@ -139,8 +124,6 @@ export default class GameState extends State {
 	}
 
 	private checkForPlayerMove() {
-		// this.player.velocity.set(0);
-
 		if (this.pressedKeys[32]) {
 			if (!this.player.onCooldown()) {
 				let rocket = this.player.shoot();
