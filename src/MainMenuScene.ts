@@ -5,14 +5,16 @@ import Game from './Game';
 import Scene from './Scene';
 
 export default class MainMenuScene extends Scene {
+	private menuBackground: PIXI.extras.TilingSprite;
+
 	constructor(name: string) {
 		super(name);
 
 		this.container.alpha = 0;
 
 		let menuTexture = PIXI.Texture.fromImage('assets/menu.png');
-		let menuBackground = new PIXI.extras.TilingSprite(menuTexture, 800, 600);
-		this.container.addChild(menuBackground);
+		this.menuBackground = new PIXI.extras.TilingSprite(menuTexture, 800, 600);
+		this.container.addChild(this.menuBackground);
 
 		let logoTexture = PIXI.Texture.fromImage('assets/logo.png');
 		let logo = new PIXI.Sprite(logoTexture);
@@ -35,13 +37,15 @@ export default class MainMenuScene extends Scene {
 		exitButton.position.set(248, 485);
 		this.container.addChild(exitButton);
 
-		this.ticker.add((delta) => {
-			if (this.container.alpha < 1) {
-				this.container.alpha += 0.01;
-			}
-			menuBackground.tilePosition.x -= 20 * (1 - this.container.alpha);
-			menuBackground.tilePosition.x -= 10;
-		}, this);
+		this.ticker.add(this.update, this);
+	}
+
+	protected update(delta: number): void {
+		if (this.container.alpha < 1) {
+			this.container.alpha += 0.01;
+		}
+		this.menuBackground.tilePosition.x -= 20 * (1 - this.container.alpha);
+		this.menuBackground.tilePosition.x -= 10;
 	}
 
 	private onGameButtonClick(num: number) {
