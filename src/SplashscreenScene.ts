@@ -4,29 +4,33 @@ import Game from './Game';
 import Scene from './Scene';
 
 export default class SplashscreenScene extends Scene {
+	private splashscreen: PIXI.Sprite;
+	private blurFilter: PIXI.filters.BlurFilter;
 	constructor(name: string) {
 		super(name);
 
 		let splashscreenTexture = PIXI.Texture.fromImage('assets/splashscreen.png');
-		let splashscreen = new PIXI.Sprite(splashscreenTexture);
-		let blurFilter = new PIXI.filters.BlurFilter();
-		blurFilter.blur = 0;
+		this.splashscreen = new PIXI.Sprite(splashscreenTexture);
+		this.blurFilter = new PIXI.filters.BlurFilter();
+		this.blurFilter.blur = 0;
 
-		splashscreen.filters = [blurFilter];
+		this.splashscreen.filters = [this.blurFilter];
 
-		this.container.addChild(splashscreen);
+		this.container.addChild(this.splashscreen);
 
-		this.ticker.add((delta) => {
-			if (this.runningSince + this.ticker.elapsedMS > 2000) {
-				splashscreen.alpha -= 0.01;
-				blurFilter.blur += 0.1;
-				if (splashscreen.alpha <= 0) {
-					Game.switchToScene('main');
-				}
+		this.ticker.add(this.update, this);
+	}
+
+	protected update(delta: number): void {
+		if (this.runningSince + this.ticker.elapsedMS > 2000) {
+			this.splashscreen.alpha -= 0.01;
+			this.blurFilter.blur += 0.1;
+			if (this.splashscreen.alpha <= 0) {
+				Game.switchToScene('main');
 			}
+		}
 
-			this.runningSince += this.ticker.elapsedMS;
-		}, this);
+		this.runningSince += this.ticker.elapsedMS;
 	}
 
 	public keyDownHandler(event: KeyboardEvent) {

@@ -3,7 +3,7 @@ import * as PIXI from 'pixi.js';
 import Game from './Game';
 import GameObject from './GameObject';
 
-export default class Scene {
+abstract class Scene {
 	public name: string;
 	public container: PIXI.Container;
 	protected runningSince: number;
@@ -19,4 +19,8 @@ export default class Scene {
 	public addGameObject(gameObject: GameObject) {
 		this.container.addChild(gameObject.container);
 	}
+
+	protected abstract update(delta: number): void;
 }
+
+export default Scene;

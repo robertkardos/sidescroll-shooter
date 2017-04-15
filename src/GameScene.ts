@@ -47,21 +47,23 @@ export default class GameScene extends Scene {
 		this.player = new Player();
 		this.addGameObject(this.player);
 
-		this.ticker.add((delta: number) => {
-			this.scrollBackground();
-			this.tryToSpawnEnemy(delta);
-			this.checkForPlayerMove();
-			this.detectCollisions();
-			this.cleanUp(delta);
-			this.update(delta);
+		this.ticker.add(this.update, this);
+	}
 
-			if (this.player.isDisposable) {
-				delete this.player;
-				alert('getrekt');
-				Game.switchToScene('main');
-				return;
-			}
-		}, this);
+	protected update(delta: number) {
+		this.scrollBackground();
+		this.tryToSpawnEnemy(delta);
+		this.checkForPlayerMove();
+		this.detectCollisions();
+		this.cleanUp(delta);
+		this.updateObjects(delta);
+
+		if (this.player.isDisposable) {
+			delete this.player;
+			alert('getrekt');
+			Game.switchToScene('main');
+			return;
+		}
 	}
 
 	private scrollBackground() {
@@ -69,7 +71,7 @@ export default class GameScene extends Scene {
 		this.space.tilePosition.x -= 0.05;
 	}
 
-	private update(delta: number) {
+	private updateObjects(delta: number) {
 		this.enemies.forEach((enemy) => enemy.update(delta));
 		this.projectiles.forEach((projectile) => projectile.update(delta));
 		this.player.update(delta);
