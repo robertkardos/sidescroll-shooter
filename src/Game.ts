@@ -6,6 +6,7 @@ import SceneFactory from './SceneFactory';
 export default class Game {
 	private static scenes: any;
 	public static currentSceneName: string;
+	public static currentScene: Scene;
 	public static app: PIXI.Application;
 
 	private constructor() {}
@@ -16,22 +17,31 @@ export default class Game {
 		document.body.appendChild(Game.app.view);
 		Game.bindControls();
 
-		Game.addScene(SceneFactory.create('splashscreen'));
+		// let currentScene = SceneFactory.create('splashscreen');
+		Game.addScene('splashscreen');
+		// Game.currentSceneName = currentScene.name;
 	}
 
-	public static addScene(newScene: Scene) {
-		Game.scenes[newScene.name] = newScene;
-		Game.currentSceneName = newScene.name;
-		Game.scenes[newScene.name].ticker.start();
-		Game.app.stage.addChild(Game.scenes[newScene.name].container);
+	// public static addScene(newScene: Scene) {
+	public static addScene(newScene: string) {
+		this.currentScene = SceneFactory.create(newScene);
+		Game.scenes[newScene] = this.currentScene;
+		Game.currentSceneName = newScene;
+		Game.app.stage.addChild(Game.scenes[newScene].container);
+		Game.scenes[newScene].ticker.start();
 	}
 
 	public static switchToScene(sceneName: string) {
 		Game.scenes[Game.currentSceneName].ticker.stop();
 		Game.app.stage.removeChild(Game.scenes[Game.currentSceneName].container);
+
 		delete Game.scenes[Game.currentSceneName];
 
-		Game.addScene(SceneFactory.create(sceneName));
+		Game.addScene(sceneName);
+	}
+
+	public static getCurrentScene() {
+		return Game.scenes[Game.currentSceneName];
 	}
 
 	private static bindControls() {
